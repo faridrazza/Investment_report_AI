@@ -103,6 +103,7 @@ class ChatService:
             7. Historical Analysis
             
             Use clear section headers and provide detailed, data-driven insights.
+            Each section should start with its title in a new line.
             """)
             
             # Create the human message with the prompt
@@ -114,59 +115,59 @@ class ChatService:
             
             print("Raw AI Response:", content)  # Debug log
             
-            # Parse sections
+            # Parse sections with improved logic
             sections = {}
             current_section = None
             current_content = []
             
-            for line in content.split('\n'):
-                line = line.strip()
+            # Define section markers
+            section_markers = {
+                'executive summary': 'executive_summary',
+                'performance analysis': 'performance_analysis',
+                'asset allocation analysis': 'allocation_analysis',
+                'key observations': 'key_observations',
+                'recommendations': 'recommendations',
+                'holdings analysis': 'holdings_analysis',
+                'historical analysis': 'historical_analysis'
+            }
+            
+            lines = content.split('\n')
+            i = 0
+            while i < len(lines):
+                line = lines[i].strip()
                 lower_line = line.lower()
                 
-                # Section detection logic
-                if 'executive summary' in lower_line:
-                    if current_section and current_content:
-                        sections[current_section] = '\n'.join(current_content).strip()
-                    current_section = 'executive_summary'
-                    current_content = []
-                elif 'performance analysis' in lower_line:
-                    if current_section and current_content:
-                        sections[current_section] = '\n'.join(current_content).strip()
-                    current_section = 'performance_analysis'
-                    current_content = []
-                elif 'asset allocation analysis' in lower_line:
-                    if current_section and current_content:
-                        sections[current_section] = '\n'.join(current_content).strip()
-                    current_section = 'allocation_analysis'
-                    current_content = []
-                elif 'key observations' in lower_line:
-                    if current_section and current_content:
-                        sections[current_section] = '\n'.join(current_content).strip()
-                    current_section = 'key_observations'
-                    current_content = []
-                elif 'recommendations' in lower_line:
-                    if current_section and current_content:
-                        sections[current_section] = '\n'.join(current_content).strip()
-                    current_section = 'recommendations'
-                    current_content = []
-                elif 'holdings analysis' in lower_line:
-                    if current_section and current_content:
-                        sections[current_section] = '\n'.join(current_content).strip()
-                    current_section = 'holdings_analysis'
-                    current_content = []
-                elif 'historical analysis' in lower_line:
-                    if current_section and current_content:
-                        sections[current_section] = '\n'.join(current_content).strip()
-                    current_section = 'historical_analysis'
-                    current_content = []
-                elif current_section and line:
-                    current_content.append(line)
+                # Check for section headers
+                found_section = None
+                for marker, section_name in section_markers.items():
+                    if marker in lower_line:
+                        if current_section and current_content:
+                            sections[current_section] = '\n'.join(current_content).strip()
+                        current_section = section_name
+                        current_content = []
+                        found_section = True
+                        break
+                
+                if not found_section and current_section:
+                    # Skip the section header line itself
+                    if not (line.startswith('#') and 'conclusion' in lower_line):
+                        current_content.append(line)
+                
+                i += 1
             
             # Add the last section
             if current_section and current_content:
                 sections[current_section] = '\n'.join(current_content).strip()
             
-            # Ensure all sections exist
+            # Extract executive summary from the beginning if not already captured
+            if 'executive_summary' not in sections and content:
+                summary_end = content.lower().find('performance analysis')
+                if summary_end > 0:
+                    summary = content[:summary_end].strip()
+                    if summary:
+                        sections['executive_summary'] = summary
+            
+            # Ensure all sections exist and have content
             required_sections = [
                 'executive_summary', 'performance_analysis', 'allocation_analysis',
                 'key_observations', 'recommendations', 'holdings_analysis', 'historical_analysis'
@@ -174,7 +175,7 @@ class ChatService:
             
             for section in required_sections:
                 if section not in sections or not sections[section]:
-                    sections[section] = f"Generating {section.replace('_', ' ')}..."
+                    sections[section] = "Analysis for this section is being generated..."
             
             print("Generated sections:", sections)  # Debug log
             return sections

@@ -84,6 +84,11 @@ class ReportService:
             ai_analysis = ChatService.generate_analysis(analysis_prompt, self.vector_store)
             print("Received AI analysis:", ai_analysis)  # Debug log
             
+            # Clean up AI analysis before template rendering
+            if isinstance(ai_analysis, dict) and 'recommendations' in ai_analysis:
+                # Remove markdown formatting from recommendations
+                ai_analysis['recommendations'] = ai_analysis['recommendations'].replace('**', '')
+            
             # Generate visualizations
             asset_allocation_chart = self.visualizer.create_asset_allocation_pie(
                 client_data['assetAllocation']

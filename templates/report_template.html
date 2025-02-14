@@ -332,7 +332,8 @@
             </div>
             <div class="analysis-card">
                 <h3>Recommendations</h3>
-                {{ ai_analysis.get('recommendations', 'Analysis not available')|safe }}
+                {% set recommendations = ai_analysis.get('recommendations', '').replace('**', '') %}
+                {{ recommendations|safe }}
             </div>
         </div>
     </div>

@@ -16,6 +16,7 @@
             padding-bottom: 20px;
         }
         .section {
+            page-break-inside: avoid;
             margin-bottom: 40px;
             background: #fff;
             padding: 25px;
@@ -41,6 +42,8 @@
             border: 1px solid #e2e8f0;
         }
         .metrics-grid {
+            page-break-inside: avoid;
+            break-inside: avoid;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
@@ -98,42 +101,102 @@
             background: #f8f9fa;
             border-radius: 8px;
         }
+        .performance-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .chart-container {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .performance-metrics {
+            margin-top: 30px;
+        }
+        .recommendations-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .chart-with-analysis {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            margin: 30px 0;
+        }
+        /* Enhanced page break controls */
+        .first-page {
+            page-break-after: always !important;
+            break-after: page !important;
+        }
+        
+        .performance-history {
+            page-break-before: always !important;
+            break-before: page !important;
+        }
+        
+        .performance-analysis {
+            page-break-before: always !important;
+            break-before: page !important;
+        }
+        
+        .asset-allocation {
+            page-break-before: always !important;
+            break-before: page !important;
+            page-break-after: always !important;
+            break-after: page !important;
+        }
+        
+        .strategy-section {
+            page-break-before: always !important;
+            break-before: page !important;
+        }
+        
+        .holdings-section {
+            page-break-before: always !important;
+            break-before: page !important;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Investment Portfolio Report</h1>
-        <p>Generated on: {{ generated_date }}</p>
-    </div>
+    <!-- First Page: Executive Summary & Client Information -->
+    <div class="section first-page">
+        <div class="header">
+            <h1>Investment Portfolio Report</h1>
+            <p>Generated on: {{ generated_date }}</p>
+        </div>
 
-    <div class="section">
         <div class="executive-summary">
             <h2>Executive Summary</h2>
             {{ ai_analysis.get('executive_summary', 'Analysis not available')|safe }}
         </div>
 
-        <h2>Client Information</h2>
-        <table>
-            <tr>
-                <th>Name</th>
-                <td>{{ client.name }}</td>
-            </tr>
-            <tr>
-                <th>Account Type</th>
-                <td>{{ client.accountType }}</td>
-            </tr>
-            <tr>
-                <th>Risk Profile</th>
-                <td>{{ client.riskProfile }}</td>
-            </tr>
-            <tr>
-                <th>Investment Strategy</th>
-                <td>{{ client.investmentStrategy }}</td>
-            </tr>
-        </table>
+        <div class="client-info">
+            <h2>Client Information</h2>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <td>{{ client.name }}</td>
+                </tr>
+                <tr>
+                    <th>Account Type</th>
+                    <td>{{ client.accountType }}</td>
+                </tr>
+                <tr>
+                    <th>Risk Profile</th>
+                    <td>{{ client.riskProfile }}</td>
+                </tr>
+                <tr>
+                    <th>Investment Strategy</th>
+                    <td>{{ client.investmentStrategy }}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 
-    <div class="section">
+    <!-- Portfolio Performance Page -->
+    <div class="section performance-section">
         <h2>Portfolio Performance</h2>
         <div class="metrics-grid">
             <div class="metric-card">
@@ -161,49 +224,67 @@
                 <div class="metric-value">${{ "{:,.2f}".format(portfolio.incomeEarned) }}</div>
             </div>
         </div>
-        
-        <div class="performance-metrics">
-            <h3>Performance History</h3>
-            <table>
-                <tr>
-                    <th>Period</th>
-                    <th>Return</th>
-                </tr>
-                <tr>
-                    <td>YTD</td>
-                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics.ytd) }}</td>
-                </tr>
-                <tr>
-                    <td>1 Year</td>
-                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics['1year']) }}</td>
-                </tr>
-                <tr>
-                    <td>3 Year</td>
-                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics['3year']) if portfolio.performance_metrics['3year'] else 'N/A' }}</td>
-                </tr>
-                <tr>
-                    <td>5 Year</td>
-                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics['5year']) if portfolio.performance_metrics['5year'] else 'N/A' }}</td>
-                </tr>
-                <tr>
-                    <td>Since Inception</td>
-                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics.sinceInception) }}</td>
-                </tr>
-            </table>
+    </div>
+
+    <!-- Performance History Pages -->
+    <div class="section performance-history">
+        <h2>Performance History</h2>
+        <div class="chart-container">
+            <div class="chart">
+                <img src="data:image/png;base64,{{ charts.performance }}" alt="Performance History">
+            </div>
+            <div class="performance-metrics">
+                <table>
+                    <tr>
+                        <th>Period</th>
+                        <th>Return</th>
+                    </tr>
+                    <tr>
+                        <td>YTD</td>
+                        <td>{{ "{:.1f}%".format(portfolio.performance_metrics.ytd) }}</td>
+                    </tr>
+                    <tr>
+                        <td>1 Year</td>
+                        <td>{{ "{:.1f}%".format(portfolio.performance_metrics['1year']) }}</td>
+                    </tr>
+                    <tr>
+                        <td>3 Year</td>
+                        <td>{{ "{:.1f}%".format(portfolio.performance_metrics['3year']) if portfolio.performance_metrics['3year'] else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>5 Year</td>
+                        <td>{{ "{:.1f}%".format(portfolio.performance_metrics['5year']) if portfolio.performance_metrics['5year'] else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Since Inception</td>
+                        <td>{{ "{:.1f}%".format(portfolio.performance_metrics.sinceInception) }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="section">
+    <div class="section performance-analysis">
+        <div class="analysis-content">
+            {{ ai_analysis.get('performance_analysis', 'Analysis not available')|safe }}
+        </div>
+    </div>
+
+    <!-- Asset Allocation Page -->
+    <div class="section asset-allocation">
         <h2>Asset Allocation Analysis</h2>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ charts.asset_allocation }}" alt="Asset Allocation">
-        </div>
-        <div class="analysis-card">
-            {{ ai_analysis.get('allocation_analysis', 'Analysis not available')|safe }}
+        <div class="chart-with-analysis">
+            <div class="chart">
+                <img src="data:image/png;base64,{{ charts.asset_allocation }}" alt="Asset Allocation">
+            </div>
+            <div class="analysis-card">
+                {{ ai_analysis.get('allocation_analysis', 'Analysis not available')|safe }}
+            </div>
         </div>
     </div>
 
-    <div class="section">
+    <!-- Investment Strategy Page -->
+    <div class="section strategy-section">
         <h2>Investment Strategy & Recommendations</h2>
         <div class="analysis-grid">
             <div class="analysis-card">
@@ -217,23 +298,16 @@
         </div>
     </div>
 
-    <div class="section">
-        <h2>Performance History</h2>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ charts.performance }}" alt="Performance History">
-        </div>
-        <div class="analysis-card">
-            {{ ai_analysis.get('historical_analysis', 'Analysis not available')|safe }}
-        </div>
-    </div>
-
-    <div class="section">
+    <!-- Top Holdings Page -->
+    <div class="section holdings-section">
         <h2>Top Holdings Analysis</h2>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ charts.holdings }}" alt="Top Holdings">
-        </div>
-        <div class="analysis-card">
-            {{ ai_analysis.get('holdings_analysis', 'Analysis not available')|safe }}
+        <div class="chart-with-analysis">
+            <div class="chart">
+                <img src="data:image/png;base64,{{ charts.holdings }}" alt="Top Holdings">
+            </div>
+            <div class="analysis-card">
+                {{ ai_analysis.get('holdings_analysis', 'Analysis not available')|safe }}
+            </div>
         </div>
     </div>
 

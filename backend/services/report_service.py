@@ -129,10 +129,10 @@ class ReportService:
             # PDF options for better rendering
             pdf_options = {
                 'page-size': 'Letter',
-                'margin-top': '0.75in',
-                'margin-right': '0.75in',
-                'margin-bottom': '0.75in',
-                'margin-left': '0.75in',
+                'margin-top': '0.100in',
+                'margin-right': '0.100in',
+                'margin-bottom': '0.100in',
+                'margin-left': '0.100in',
                 'encoding': 'UTF-8',
                 'no-outline': None,
                 'enable-local-file-access': None,

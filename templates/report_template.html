@@ -7,39 +7,88 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
             margin: 40px;
+            color: #333;
         }
         .header {
             text-align: center;
             margin-bottom: 30px;
+            border-bottom: 2px solid #2c5282;
+            padding-bottom: 20px;
         }
         .section {
+            margin-bottom: 40px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .executive-summary {
+            background: #f8f9fa;
+            padding: 25px;
+            border-left: 4px solid #2c5282;
             margin-bottom: 30px;
+        }
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .analysis-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .metric-value {
+            font-size: 1.5em;
+            color: #2c5282;
+            font-weight: bold;
         }
         .chart {
             text-align: center;
             margin: 20px 0;
-        }
-        .chart img {
-            max-width: 100%;
-            height: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            background: #fff;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: left;
+            border-bottom: 1px solid #e2e8f0;
         }
         th {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
+            color: #2c5282;
+            font-weight: 600;
         }
         .disclaimer {
             font-size: 0.8em;
             color: #666;
             margin-top: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -50,6 +99,11 @@
     </div>
 
     <div class="section">
+        <div class="executive-summary">
+            <h2>Executive Summary</h2>
+            {{ ai_analysis.get('executive_summary', 'Analysis not available')|safe }}
+        </div>
+
         <h2>Client Information</h2>
         <table>
             <tr>
@@ -64,27 +118,59 @@
                 <th>Risk Profile</th>
                 <td>{{ client.riskProfile }}</td>
             </tr>
-        </table>
-    </div>
-
-    <div class="section">
-        <h2>Portfolio Summary</h2>
-        <table>
             <tr>
-                <th>Total Value</th>
-                <td>${{ "{:,.2f}".format(portfolio.totalValue) }}</td>
-            </tr>
-            <tr>
-                <th>Period Performance</th>
-                <td>${{ "{:,.2f}".format(portfolio.realizedGains + portfolio.unrealizedGains) }}</td>
+                <th>Investment Strategy</th>
+                <td>{{ client.investmentStrategy }}</td>
             </tr>
         </table>
     </div>
 
     <div class="section">
-        <h2>Asset Allocation</h2>
+        <h2>Portfolio Performance</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Total Portfolio Value</h3>
+                <div class="metric-value">${{ "{:,.2f}".format(portfolio.totalValue) }}</div>
+            </div>
+            <div class="metric-card">
+                <h3>YTD Return</h3>
+                <div class="metric-value">{{ "{:.1f}%".format(portfolio.ytd) }}</div>
+            </div>
+        </div>
+        
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <h3>Market Context</h3>
+                {{ market_context|safe }}
+            </div>
+            <div class="analysis-card">
+                <h3>Performance Analysis</h3>
+                {{ ai_analysis.get('performance_analysis', 'Analysis not available')|safe }}
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Asset Allocation Analysis</h2>
         <div class="chart">
             <img src="data:image/png;base64,{{ charts.asset_allocation }}" alt="Asset Allocation">
+        </div>
+        <div class="analysis-card">
+            {{ ai_analysis.get('allocation_analysis', 'Analysis not available')|safe }}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Investment Strategy & Recommendations</h2>
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <h3>Key Observations</h3>
+                {{ ai_analysis.get('key_observations', 'Analysis not available')|safe }}
+            </div>
+            <div class="analysis-card">
+                <h3>Recommendations</h3>
+                {{ ai_analysis.get('recommendations', 'Analysis not available')|safe }}
+            </div>
         </div>
     </div>
 
@@ -93,17 +179,31 @@
         <div class="chart">
             <img src="data:image/png;base64,{{ charts.performance }}" alt="Performance History">
         </div>
+        <div class="analysis-card">
+            {{ ai_analysis.get('historical_analysis', 'Analysis not available')|safe }}
+        </div>
     </div>
 
     <div class="section">
-        <h2>Top Holdings</h2>
+        <h2>Top Holdings Analysis</h2>
         <div class="chart">
             <img src="data:image/png;base64,{{ charts.holdings }}" alt="Top Holdings">
+        </div>
+        <div class="analysis-card">
+            {{ ai_analysis.get('holdings_analysis', 'Analysis not available')|safe }}
         </div>
     </div>
 
     <div class="disclaimer">
-        <p>This report is for informational purposes only. Past performance is not indicative of future results.</p>
+        <p><strong>Disclaimer:</strong> {{ report_metadata.get('disclaimer', '') }}</p>
+        <p><strong>{{ report_metadata.get('firmName', '') }}</strong></p>
+        {% if report_metadata.get('firmContact') %}
+        <p>
+            {{ report_metadata.get('firmContact', {}).get('address', '') }}<br>
+            Phone: {{ report_metadata.get('firmContact', {}).get('phone', '') }}<br>
+            Email: {{ report_metadata.get('firmContact', {}).get('email', '') }}
+        </p>
+        {% endif %}
     </div>
 </body>
 </html> 

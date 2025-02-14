@@ -6,7 +6,7 @@ except ImportError:
 
 from typing import Dict, List
 import json
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from backend.config import Config
 import os

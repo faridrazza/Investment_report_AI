@@ -22,11 +22,14 @@ class Config:
         raise ValueError("ALPHA_VANTAGE_API_KEY environment variable is not set")
     
     # Model settings
-    MODEL_NAME = os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
+    MODEL_NAME = "gpt-4-turbo-preview"
     EMBEDDING_MODEL = "text-embedding-3-small"
     
     # Vector store settings
     VECTOR_STORE_PATH = "vector_store"
     
     # Report generation settings
-    REPORT_TEMPLATE_PATH = "templates/report_template.html" 
+    REPORT_TEMPLATE_PATH = "templates/report_template.html"
+    
+    # Add debug mode
+    DEBUG = True 

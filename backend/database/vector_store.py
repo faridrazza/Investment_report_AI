@@ -10,6 +10,7 @@ from langchain.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from backend.config import Config
 import os
+from backend.services.market_service import MarketService
 
 class VectorStore:
     def __init__(self):
@@ -59,6 +60,11 @@ class VectorStore:
                 )
                 texts.append(portfolio_text)
                 metadatas.append({"client_id": client_info.get('id')})
+
+            # Add market context embeddings
+            market_text = MarketService.get_market_summary()
+            texts.append(market_text)
+            metadatas.append({"type": "market_context"})
 
             # Create new vector store
             self.vector_store = FAISS.from_texts(

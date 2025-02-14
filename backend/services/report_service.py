@@ -5,6 +5,8 @@ import pdfkit
 import platform
 from pathlib import Path
 from backend.utils.visualization import PortfolioVisualizer
+from backend.services.chat_service import ChatService
+from backend.services.market_service import MarketService
 
 class ReportService:
     def __init__(self):
@@ -37,6 +39,26 @@ class ReportService:
             client_data['topHoldings']
         )
 
+        # Generate AI-powered insights
+        analysis_prompt = f"""
+        Generate a professional investment analysis report for {client_data['clientInfo']['name']} with:
+        1. Executive summary of portfolio performance
+        2. Market context analysis for the reporting period
+        3. Key observations about asset allocation
+        4. Recommendations for portfolio adjustments
+        5. Risk assessment and mitigation strategies
+        
+        Portfolio Details:
+        - Total Value: ${client_data['portfolioSummary']['totalValue']:,.2f}
+        - Top Holdings: {[h['name'] for h in client_data['topHoldings']]}
+        - Risk Profile: {client_data['clientInfo']['riskProfile']}
+        """
+        
+        try:
+            ai_analysis = ChatService.generate_analysis(analysis_prompt)
+        except Exception as e:
+            ai_analysis = "AI analysis unavailable at this time"
+
         # Prepare template data
         template_data = {
             'client': client_data['clientInfo'],
@@ -46,7 +68,9 @@ class ReportService:
                 'performance': performance_chart,
                 'holdings': holdings_chart
             },
-            'generated_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            'generated_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'ai_analysis': ai_analysis,
+            'market_context': MarketService.get_market_summary()
         }
 
         # Render HTML template

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Investment Portfolio Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .chart {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .chart img {
+            max-width: 100%;
+            height: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .disclaimer {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Investment Portfolio Report</h1>
+        <p>Generated on: {{ generated_date }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Client Information</h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>{{ client.name }}</td>
+            </tr>
+            <tr>
+                <th>Account Type</th>
+                <td>{{ client.accountType }}</td>
+            </tr>
+            <tr>
+                <th>Risk Profile</th>
+                <td>{{ client.riskProfile }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Portfolio Summary</h2>
+        <table>
+            <tr>
+                <th>Total Value</th>
+                <td>${{ "{:,.2f}".format(portfolio.totalValue) }}</td>
+            </tr>
+            <tr>
+                <th>Period Performance</th>
+                <td>${{ "{:,.2f}".format(portfolio.realizedGains + portfolio.unrealizedGains) }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Asset Allocation</h2>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ charts.asset_allocation }}" alt="Asset Allocation">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Performance History</h2>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ charts.performance }}" alt="Performance History">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Top Holdings</h2>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ charts.holdings }}" alt="Top Holdings">
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        <p>This report is for informational purposes only. Past performance is not indicative of future results.</p>
+    </div>
+</body>
+</html> 

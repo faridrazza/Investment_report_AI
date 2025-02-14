@@ -13,3 +13,8 @@
 /backend/reports
 /backend/pdfs   
 .venv
+
+**/.venv/
+**/vector_store/
+**/pdfs/
+**/reports/

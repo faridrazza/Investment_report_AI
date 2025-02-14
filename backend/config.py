@@ -32,4 +32,4 @@ class Config:
     REPORT_TEMPLATE_PATH = "templates/report_template.html"
     
     # Add debug mode
-    DEBUG = True 
+    DEBUG = True

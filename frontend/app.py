@@ -187,3 +187,4 @@ class AssetManagementApp:
 if __name__ == "__main__":
     app = AssetManagementApp()
     app.run() 
+    

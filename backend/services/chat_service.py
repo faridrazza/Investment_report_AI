@@ -103,7 +103,7 @@ class ChatService:
             7. Historical Analysis
             
             Use clear section headers and provide detailed, data-driven insights.
-            Each section should start with its title in a new line.
+            Each section must start with its exact title (e.g., "Executive Summary").
             """)
             
             # Create the human message with the prompt
@@ -120,7 +120,7 @@ class ChatService:
             current_section = None
             current_content = []
             
-            # Define section markers
+            # Define section markers with exact matches
             section_markers = {
                 'executive summary': 'executive_summary',
                 'performance analysis': 'performance_analysis',
@@ -131,43 +131,25 @@ class ChatService:
                 'historical analysis': 'historical_analysis'
             }
             
-            lines = content.split('\n')
-            i = 0
-            while i < len(lines):
-                line = lines[i].strip()
-                lower_line = line.lower()
+            # Split content by ### to separate sections
+            raw_sections = content.split('###')
+            
+            for section in raw_sections:
+                if not section.strip():
+                    continue
+                    
+                # Get the first line as the section title
+                lines = section.strip().split('\n')
+                title = lines[0].strip().lower()
+                content = '\n'.join(lines[1:]).strip()
                 
-                # Check for section headers
-                found_section = None
+                # Match section title to our markers
                 for marker, section_name in section_markers.items():
-                    if marker in lower_line:
-                        if current_section and current_content:
-                            sections[current_section] = '\n'.join(current_content).strip()
-                        current_section = section_name
-                        current_content = []
-                        found_section = True
+                    if marker in title:
+                        sections[section_name] = content
                         break
-                
-                if not found_section and current_section:
-                    # Skip the section header line itself
-                    if not (line.startswith('#') and 'conclusion' in lower_line):
-                        current_content.append(line)
-                
-                i += 1
             
-            # Add the last section
-            if current_section and current_content:
-                sections[current_section] = '\n'.join(current_content).strip()
-            
-            # Extract executive summary from the beginning if not already captured
-            if 'executive_summary' not in sections and content:
-                summary_end = content.lower().find('performance analysis')
-                if summary_end > 0:
-                    summary = content[:summary_end].strip()
-                    if summary:
-                        sections['executive_summary'] = summary
-            
-            # Ensure all sections exist and have content
+            # Ensure all sections exist
             required_sections = [
                 'executive_summary', 'performance_analysis', 'allocation_analysis',
                 'key_observations', 'recommendations', 'holdings_analysis', 'historical_analysis'

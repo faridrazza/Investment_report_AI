@@ -63,8 +63,9 @@ class PortfolioVisualizer:
         """Create line graph for performance metrics"""
         try:
             plt.clf()
-            plt.figure(figsize=(10, 6), dpi=100, facecolor='white')
+            plt.figure(figsize=(12, 6), dpi=100, facecolor='white')
             
+            # Define periods and values
             periods = ['YTD', '1 Year', '3 Year', '5 Year', 'Since Inception']
             values = [
                 performance_data['ytd'],
@@ -74,31 +75,36 @@ class PortfolioVisualizer:
                 performance_data['sinceInception']
             ]
             
-            # Create bar chart with improved styling
-            bars = plt.bar(periods, values, color='#2c5282', alpha=0.7)
+            # Create line plot with markers
+            plt.plot(periods, values, marker='o', linewidth=2, markersize=8, 
+                    color='#2c5282', label='Return')
             
-            # Add value labels on top of bars
-            for bar in bars:
-                height = bar.get_height()
-                plt.text(bar.get_x() + bar.get_width()/2., height,
-                        f'{height:.1f}%',
-                        ha='center', va='bottom', fontsize=10,
-                        color='black')
+            # Add value labels above points
+            for i, value in enumerate(values):
+                plt.text(i, value + 0.5, f'{value:.1f}%', 
+                        ha='center', va='bottom', fontsize=10, color='black')
             
+            # Customize the plot
             plt.title('Performance History', pad=20, fontsize=14, fontweight='bold', color='black')
             plt.ylabel('Return (%)', fontsize=12, color='black')
-            plt.grid(True, alpha=0.3)
+            plt.grid(True, alpha=0.3, linestyle='--')
             
-            # Rotate x-axis labels for better readability
-            plt.xticks(rotation=45, ha='right', fontsize=10, color='black')
+            # Customize axes
+            plt.xticks(range(len(periods)), periods, rotation=45, ha='right', fontsize=10, color='black')
             plt.yticks(color='black')
             
+            # Add light background grid
+            plt.grid(True, linestyle='--', alpha=0.3)
+            
+            # Add padding and ensure proper layout
             plt.tight_layout(pad=3.0)
             
+            # Save to buffer
             buffer = io.BytesIO()
             plt.savefig(buffer, format='png', bbox_inches='tight',
                        facecolor='white', edgecolor='none',
-                       transparent=False)
+                       transparent=False,
+                       dpi=100)
             buffer.seek(0)
             image_png = buffer.getvalue()
             buffer.close()
@@ -108,6 +114,7 @@ class PortfolioVisualizer:
             
         except Exception as e:
             print(f"Error creating performance chart: {str(e)}")
+            print(f"Performance data received: {performance_data}")  # Debug log
             return ""
 
     def create_holdings_chart(self, holdings_data):

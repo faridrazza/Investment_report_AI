@@ -124,19 +124,15 @@ class PortfolioVisualizer:
             plt.figure(figsize=(10, 6), dpi=100, facecolor='white')
             
             securities = [holding['name'] for holding in holdings_data]
-            weights = [holding['weight'] for holding in holdings_data]
             gains = [holding['gain'] for holding in holdings_data]
             
-            x = range(len(securities))
-            width = 0.35
-            
-            # Create bars with better colors
-            plt.bar(x, weights, width, label='Weight (%)', color='#4299E1')
-            plt.bar([i + width for i in x], gains, width, label='Gain ($)', color='#48BB78')
+            # Create single bar chart for gains only
+            plt.bar(securities, gains, color='#48BB78', label='Gain ($)')
             
             plt.xlabel('Securities', fontsize=12, color='black')
+            plt.ylabel('Gain ($)', fontsize=12, color='black')
             plt.title('Top Holdings Analysis', pad=20, fontsize=14, fontweight='bold', color='black')
-            plt.xticks([i + width/2 for i in x], securities, rotation=45, ha='right', fontsize=10, color='black')
+            plt.xticks(rotation=45, ha='right', fontsize=10, color='black')
             plt.yticks(color='black')
             plt.legend(fontsize=10)
             

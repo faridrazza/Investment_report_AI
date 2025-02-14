@@ -34,29 +34,54 @@ class ChatService:
         self.message_history = []
 
     async def process_message(self, message: str) -> str:
-        """Process user message and return AI response"""
+        """Process user message with improved financial data handling"""
         try:
             # Search vector store for relevant context
-            context_results = self.vector_store.search(message)
-            context = "\n".join([content for content, _, _ in context_results])
+            context_results = self.vector_store.search(message, k=3)  # Reduced from 5 to 3
             
-            # Add context to the message
+            # Combine context with priority for financial data
+            financial_context = []
+            general_context = []
+            
+            for content, metadata, score in context_results:
+                if metadata.get('type') == 'financial':
+                    financial_context.append(content)
+                else:
+                    general_context.append(content)
+            
+            # Construct enhanced message with structured context
             enhanced_message = f"""
-            Context: {context}
-            
             Question: {message}
+            
+            Financial Information:
+            {' '.join(financial_context)}
+            
+            Additional Context:
+            {' '.join(general_context)}
+            
+            Provide a brief, focused answer using the available data. 
+            Keep responses under 3-4 sentences unless specifically asked for detailed analysis.
+            Focus on the most relevant information for the question asked.
             """
             
-            # Add message to history
-            self.message_history.append(HumanMessage(content=enhanced_message))
+            # Add system message for concise responses
+            system_message = SystemMessage(content="""
+            You are a concise financial advisor assistant. When answering:
+            1. Be brief and direct
+            2. Focus on key metrics relevant to the question
+            3. Only show calculations if specifically requested
+            4. Limit responses to 3-4 sentences unless asked for more detail
+            5. Use plain language and avoid unnecessary technical terms
+            """)
             
-            # Get response
+            # Get response with enhanced context
             response = await self.model.ainvoke([
+                system_message,
                 *self.message_history,
                 HumanMessage(content=enhanced_message)
             ])
             
-            # Add response to history
+            self.message_history.append(HumanMessage(content=message))
             self.message_history.append(AIMessage(content=response.content))
             
             return response.content

@@ -31,35 +31,62 @@ class VectorStore:
             raise ValueError(f"Failed to initialize OpenAIEmbeddings: {str(e)}")
 
     def initialize_from_json(self, json_data: Dict):
-        """Initialize vector store from client data"""
+        """Initialize vector store from client data with detailed financial information"""
         try:
             texts = []
             metadatas = []
             
             for client in json_data.get("clients", []):
-                # Create searchable text chunks with relevant client information
                 client_info = client.get("clientInfo", {})
-                portfolio_summary = client.get("portfolioSummary", {})
+                portfolio = client.get("portfolioSummary", {})
+                holdings = client.get("topHoldings", [])
                 asset_allocation = client.get("assetAllocation", {})
                 
+                # Basic client information
                 client_text = (
                     f"Client {client_info.get('name')} (ID: {client_info.get('id')}) "
                     f"has a {client_info.get('accountType')} with a {client_info.get('riskProfile')} "
-                    f"risk profile. Their portfolio value is ${portfolio_summary.get('totalValue', 0):,.2f}."
+                    f"risk profile. Their portfolio value is ${portfolio.get('totalValue', 0):,.2f}."
                 )
                 texts.append(client_text)
                 metadatas.append({"client_id": client_info.get('id')})
                 
-                # Add detailed portfolio information
-                portfolio_text = (
-                    f"Portfolio details for {client_info.get('name')}: "
-                    f"Asset allocation: Equities {asset_allocation.get('equities', {}).get('percentage')}%, "
-                    f"Fixed Income {asset_allocation.get('fixedIncome', {}).get('percentage')}%, "
-                    f"Alternatives {asset_allocation.get('alternatives', {}).get('percentage')}%, "
-                    f"Cash {asset_allocation.get('cash', {}).get('percentage')}%."
+                # Detailed financial information
+                financial_text = (
+                    f"Financial details for {client_info.get('name')}: "
+                    f"Total Value: ${portfolio.get('totalValue', 0):,.2f}, "
+                    f"Beginning Balance: ${portfolio.get('beginningBalance', 0):,.2f}, "
+                    f"Realized Gains: ${portfolio.get('realizedGains', 0):,.2f}, "
+                    f"Unrealized Gains: ${portfolio.get('unrealizedGains', 0):,.2f}, "
+                    f"Income Earned: ${portfolio.get('incomeEarned', 0):,.2f}, "
+                    f"Total Gains: ${portfolio.get('realizedGains', 0) + portfolio.get('unrealizedGains', 0):,.2f}"
                 )
-                texts.append(portfolio_text)
-                metadatas.append({"client_id": client_info.get('id')})
+                texts.append(financial_text)
+                metadatas.append({"client_id": client_info.get('id'), "type": "financial"})
+                
+                # Holdings information
+                if holdings:
+                    holdings_text = f"Top holdings for {client_info.get('name')}: "
+                    for holding in holdings:
+                        holdings_text += (
+                            f"{holding.get('name')} ({holding.get('security')}): "
+                            f"${holding.get('value', 0):,.2f} "
+                            f"({holding.get('weight')}% of portfolio), "
+                            f"Gain: ${holding.get('gain', 0):,.2f}. "
+                        )
+                    texts.append(holdings_text)
+                    metadatas.append({"client_id": client_info.get('id'), "type": "holdings"})
+                
+                # Asset allocation information
+                allocation_text = (
+                    f"Asset allocation for {client_info.get('name')}: "
+                    f"Equities: {asset_allocation.get('equities', {}).get('percentage')}%, "
+                    f"Fixed Income: {asset_allocation.get('fixedIncome', {}).get('percentage')}%, "
+                    f"Alternatives: {asset_allocation.get('alternatives', {}).get('percentage')}%, "
+                    f"Cash: {asset_allocation.get('cash', {}).get('percentage')}%"
+                )
+                texts.append(allocation_text)
+                metadatas.append({"client_id": client_info.get('id'), "type": "allocation"})
 
             # Add market context embeddings
             market_text = MarketService.get_market_summary()

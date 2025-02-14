@@ -56,3 +56,4 @@ class Portfolio(BaseModel):
     performance: Performance
     top_holdings: List[Holding]
     last_updated: datetime = datetime.now() 
+    

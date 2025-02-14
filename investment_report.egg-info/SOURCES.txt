@@ -1,8 +1,0 @@
-setup.py
-backend/__init__.py
-backend/config.py
-investment_report.egg-info/PKG-INFO
-investment_report.egg-info/SOURCES.txt
-investment_report.egg-info/dependency_links.txt
-investment_report.egg-info/requires.txt
-investment_report.egg-info/top_level.txt

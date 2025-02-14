@@ -9,3 +9,7 @@
 /backend/.env.test
 /backend/.env.production
 
+/backend/vector_store
+/backend/reports
+/backend/pdfs   
+.venv

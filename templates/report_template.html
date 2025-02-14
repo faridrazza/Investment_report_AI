@@ -144,17 +144,52 @@
                 <h3>YTD Return</h3>
                 <div class="metric-value">{{ "{:.1f}%".format(portfolio.ytd) }}</div>
             </div>
+            <div class="metric-card">
+                <h3>Beginning Balance</h3>
+                <div class="metric-value">${{ "{:,.2f}".format(portfolio.beginningBalance) }}</div>
+            </div>
+            <div class="metric-card">
+                <h3>Net Contributions</h3>
+                <div class="metric-value">${{ "{:,.2f}".format(portfolio.contributions - portfolio.withdrawals) }}</div>
+            </div>
+            <div class="metric-card">
+                <h3>Total Gains</h3>
+                <div class="metric-value">${{ "{:,.2f}".format(portfolio.realizedGains + portfolio.unrealizedGains) }}</div>
+            </div>
+            <div class="metric-card">
+                <h3>Income Earned</h3>
+                <div class="metric-value">${{ "{:,.2f}".format(portfolio.incomeEarned) }}</div>
+            </div>
         </div>
         
-        <div class="analysis-grid">
-            <div class="analysis-card">
-                <h3>Market Context</h3>
-                {{ market_context|safe }}
-            </div>
-            <div class="analysis-card">
-                <h3>Performance Analysis</h3>
-                {{ ai_analysis.get('performance_analysis', 'Analysis not available')|safe }}
-            </div>
+        <div class="performance-metrics">
+            <h3>Performance History</h3>
+            <table>
+                <tr>
+                    <th>Period</th>
+                    <th>Return</th>
+                </tr>
+                <tr>
+                    <td>YTD</td>
+                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics.ytd) }}</td>
+                </tr>
+                <tr>
+                    <td>1 Year</td>
+                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics['1year']) }}</td>
+                </tr>
+                <tr>
+                    <td>3 Year</td>
+                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics['3year']) if portfolio.performance_metrics['3year'] else 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td>5 Year</td>
+                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics['5year']) if portfolio.performance_metrics['5year'] else 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td>Since Inception</td>
+                    <td>{{ "{:.1f}%".format(portfolio.performance_metrics.sinceInception) }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 

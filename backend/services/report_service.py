@@ -29,19 +29,43 @@ class ReportService:
     def generate_report(self, client_data: Dict) -> bytes:
         """Generate a comprehensive PDF report for a client"""
         try:
-            # Initialize vector store
+            # Initialize vector store with enhanced data
             self.vector_store.initialize_from_json({"clients": [client_data]})
             
-            # Generate AI analysis
+            # Generate AI analysis with more detailed prompt
             analysis_prompt = f"""
             Please provide a detailed investment portfolio analysis with clear sections.
-            Use the following data:
+            Use the following comprehensive data:
 
             Client: {client_data['clientInfo']['name']}
             Account Type: {client_data['clientInfo']['accountType']}
             Risk Profile: {client_data['clientInfo']['riskProfile']}
-            Portfolio Value: ${client_data['portfolioSummary']['totalValue']:,.2f}
-            YTD Return: {client_data['performance']['ytd']}%
+            Investment Strategy: {client_data['clientInfo']['investmentStrategy']}
+            Account Open Date: {client_data['clientInfo']['accountOpenDate']}
+            Relationship Manager: {client_data['clientInfo']['relationshipManager']}
+
+            Portfolio Summary:
+            - Total Value: ${client_data['portfolioSummary']['totalValue']:,.2f}
+            - Beginning Balance: ${client_data['portfolioSummary']['beginningBalance']:,.2f}
+            - Contributions: ${client_data['portfolioSummary']['contributions']:,.2f}
+            - Withdrawals: ${client_data['portfolioSummary']['withdrawals']:,.2f}
+            - Realized Gains: ${client_data['portfolioSummary']['realizedGains']:,.2f}
+            - Unrealized Gains: ${client_data['portfolioSummary']['unrealizedGains']:,.2f}
+            - Income Earned: ${client_data['portfolioSummary']['incomeEarned']:,.2f}
+            - Fees: ${client_data['portfolioSummary']['fees']:,.2f}
+
+            Performance Metrics:
+            - YTD Return: {client_data['performance']['ytd']}%
+            - 1 Year Return: {client_data['performance']['1year']}%
+            - 3 Year Return: {client_data['performance']['3year']}%
+            - 5 Year Return: {client_data['performance']['5year']}%
+            - Since Inception: {client_data['performance']['sinceInception']}%
+
+            Asset Allocation:
+            - Equities: {client_data['assetAllocation']['equities']['percentage']}% (Target: {client_data['assetAllocation']['equities']['target']}%)
+            - Fixed Income: {client_data['assetAllocation']['fixedIncome']['percentage']}% (Target: {client_data['assetAllocation']['fixedIncome']['target']}%)
+            - Alternatives: {client_data['assetAllocation']['alternatives']['percentage']}% (Target: {client_data['assetAllocation']['alternatives']['target']}%)
+            - Cash: {client_data['assetAllocation']['cash']['percentage']}% (Target: {client_data['assetAllocation']['cash']['target']}%)
 
             Please analyze and provide specific recommendations in these sections:
             1. Executive Summary
@@ -53,6 +77,7 @@ class ReportService:
             7. Historical Analysis
 
             Use the provided data to make specific, data-driven observations and recommendations.
+            Include variance analysis for asset allocation targets and performance benchmarks.
             """
 
             print("Sending prompt to AI:", analysis_prompt)  # Debug log
@@ -70,12 +95,14 @@ class ReportService:
                 client_data['topHoldings']
             )
 
-            # Prepare template data
+            # Prepare enhanced template data
             template_data = {
                 'client': client_data['clientInfo'],
                 'portfolio': {
                     **client_data['portfolioSummary'],
-                    'ytd': client_data['performance']['ytd']
+                    'ytd': client_data['performance']['ytd'],
+                    'performance_metrics': client_data['performance'],
+                    'asset_allocation': client_data['assetAllocation']
                 },
                 'charts': {
                     'asset_allocation': asset_allocation_chart,
@@ -85,7 +112,8 @@ class ReportService:
                 'generated_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'ai_analysis': ai_analysis,
                 'market_context': MarketService.get_market_summary(),
-                'report_metadata': client_data.get('reportMetadata', {})
+                'report_metadata': client_data.get('reportMetadata', {}),
+                'top_holdings': client_data['topHoldings']
             }
 
             # Debug logging

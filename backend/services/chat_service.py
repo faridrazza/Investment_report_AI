@@ -19,11 +19,15 @@ class ChatService:
             openai_api_key=Config.OPENAI_API_KEY,
             temperature=0.7
         )
+        self.current_client = None
+        self.message_history = []
         
-        # Create a chat prompt template
+        # Create a chat prompt template with client context
         self.prompt = ChatPromptTemplate.from_messages([
             SystemMessage(content="""You are a professional investment advisor assistant. 
-            Use the available portfolio data to provide accurate, specific answers about the client's investments.
+            You are currently assisting with the portfolio of {client_name}.
+            Only provide information about this client's portfolio.
+            Use the available portfolio data to provide accurate, specific answers.
             Always be professional and precise in your responses."""),
             MessagesPlaceholder(variable_name="history"),
             ("human", "{input}")
@@ -31,13 +35,24 @@ class ChatService:
         
         # Create the runnable chain
         self.chain = self.prompt | self.model
-        self.message_history = []
 
+    def set_current_client(self, client_data: Dict):
+        """Set the current client context"""
+        self.current_client = client_data
+        self.message_history = []  # Reset history when switching clients
+        
     async def process_message(self, message: str) -> str:
-        """Process user message with improved financial data handling"""
+        """Process user message with client context"""
         try:
-            # Search vector store for relevant context
-            context_results = self.vector_store.search(message, k=3)  # Reduced from 5 to 3
+            if not self.current_client:
+                return "Please select a client first."
+
+            # Search vector store with client-specific context
+            context_results = self.vector_store.search(
+                query=message,
+                client_id=self.current_client['clientInfo']['id'],
+                k=3
+            )
             
             # Combine context with priority for financial data
             financial_context = []
@@ -49,8 +64,10 @@ class ChatService:
                 else:
                     general_context.append(content)
             
-            # Construct enhanced message with structured context
+            # Construct enhanced message with client context
             enhanced_message = f"""
+            Context: You are discussing the portfolio of {self.current_client['clientInfo']['name']}.
+            
             Question: {message}
             
             Financial Information:
@@ -58,31 +75,23 @@ class ChatService:
             
             Additional Context:
             {' '.join(general_context)}
-            
-            Provide a brief, focused answer using the available data. 
-            Keep responses under 3-4 sentences unless specifically asked for detailed analysis.
-            Focus on the most relevant information for the question asked.
             """
             
-            # Add system message for concise responses
-            system_message = SystemMessage(content="""
-            You are a concise financial advisor assistant. When answering:
-            1. Be brief and direct
-            2. Focus on key metrics relevant to the question
-            3. Only show calculations if specifically requested
-            4. Limit responses to 3-4 sentences unless asked for more detail
-            5. Use plain language and avoid unnecessary technical terms
-            """)
-            
-            # Get response with enhanced context
+            # Get response with client context
             response = await self.model.ainvoke([
-                system_message,
+                SystemMessage(content=f"""You are assisting with {self.current_client['clientInfo']['name']}'s portfolio.
+                Only provide information about this specific client."""),
                 *self.message_history,
                 HumanMessage(content=enhanced_message)
             ])
             
+            # Update message history
             self.message_history.append(HumanMessage(content=message))
             self.message_history.append(AIMessage(content=response.content))
+            
+            # Limit history length to prevent token limits
+            if len(self.message_history) > 10:
+                self.message_history = self.message_history[-10:]
             
             return response.content
             

@@ -106,13 +106,31 @@ class VectorStore:
         except Exception as e:
             raise ValueError(f"Failed to initialize vector store from JSON: {str(e)}")
 
-    def search(self, query: str, k: int = 3) -> List[Dict]:
-        """Search the vector store for relevant client information"""
+    def search(self, query: str, client_id: str = None, k: int = 3) -> List[Dict]:
+        """Search the vector store with optional client filtering"""
         if not self.vector_store:
             raise ValueError("Vector store not initialized")
             
-        results = self.vector_store.similarity_search_with_score(query, k=k)
-        return [(doc.page_content, doc.metadata, score) for doc, score in results]
+        try:
+            # Clean and prepare the query
+            query = query.lower().strip()
+            
+            # Get search results
+            results = self.vector_store.similarity_search_with_score(query, k=k)
+            
+            # Filter results by client_id if provided
+            if client_id:
+                filtered_results = [
+                    (doc, score) for doc, score in results
+                    if doc.metadata.get('client_id') == client_id
+                ]
+                results = filtered_results if filtered_results else results[:1]
+            
+            return [(doc.page_content, doc.metadata, score) for doc, score in results]
+            
+        except Exception as e:
+            print(f"Search error: {str(e)}")
+            return []
 
     def save_to_disk(self, directory: str = "vector_store"):
         """Save the vector store to disk"""

@@ -153,18 +153,25 @@ class AssetManagementApp:
     def show_chat_interface(self, client_info):
         st.header("AI Assistant")
         
-        # Initialize chat history
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-
-        # Display chat history
-        for message in st.session_state.messages:
+        # Set current client context
+        self.chat_service.set_current_client(client_info)
+        
+        # Initialize chat history for the current client
+        client_id = client_info['clientInfo']['id']
+        if "chat_histories" not in st.session_state:
+            st.session_state.chat_histories = {}
+        if client_id not in st.session_state.chat_histories:
+            st.session_state.chat_histories[client_id] = []
+        
+        # Display chat history for current client
+        for message in st.session_state.chat_histories[client_id]:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
-
+        
         # Chat input
-        if prompt := st.chat_input("Ask me anything about the portfolio..."):
-            st.session_state.messages.append({"role": "user", "content": prompt})
+        if prompt := st.chat_input(f"Ask me anything about {client_info['clientInfo']['name']}'s portfolio..."):
+            # Add user message to history
+            st.session_state.chat_histories[client_id].append({"role": "user", "content": prompt})
             with st.chat_message("user"):
                 st.markdown(prompt)
             
@@ -172,9 +179,10 @@ class AssetManagementApp:
             with st.spinner("Analyzing..."):
                 response = asyncio.run(self.chat_service.process_message(prompt))
             
+            # Add assistant response to history
             with st.chat_message("assistant"):
                 st.markdown(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
+            st.session_state.chat_histories[client_id].append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":
     app = AssetManagementApp()

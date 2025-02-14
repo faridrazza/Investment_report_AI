@@ -1,6 +1,6 @@
+# Environment files
 .env
 /backend/.env
-
 /backend/.env.local
 /backend/.env.development.local
 /backend/.env.test.local
@@ -9,12 +9,39 @@
 /backend/.env.test
 /backend/.env.production
 
+# Application directories
 /backend/vector_store
 /backend/reports
 /backend/pdfs   
 .venv
 
+# Wildcard directories
 **/.venv/
 **/vector_store/
 **/pdfs/
 **/reports/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+**/__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Python distribution/packaging
+*.egg-info/
+*.egg
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+investment_report.egg-info/

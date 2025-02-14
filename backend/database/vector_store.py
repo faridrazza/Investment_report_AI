@@ -64,15 +64,15 @@ class VectorStore:
                 texts.append(financial_text)
                 metadatas.append({"client_id": client_info.get('id'), "type": "financial"})
                 
-                # Holdings information
+                # Holdings information with improved formatting
                 if holdings:
-                    holdings_text = f"Top holdings for {client_info.get('name')}: "
+                    holdings_text = f"Top holdings for {client_info.get('name')}:\n"
                     for holding in holdings:
                         holdings_text += (
-                            f"{holding.get('name')} ({holding.get('security')}): "
-                            f"${holding.get('value', 0):,.2f} "
-                            f"({holding.get('weight')}% of portfolio), "
-                            f"Gain: ${holding.get('gain', 0):,.2f}. "
+                            f"- {holding.get('name')} ({holding.get('security')})\n"
+                            f"  Value: ${holding.get('value', 0):,.2f}\n"
+                            f"  Portfolio Weight: {holding.get('weight')}%\n"
+                            f"  Gain: ${holding.get('gain', 0):,.2f}\n"
                         )
                     texts.append(holdings_text)
                     metadatas.append({"client_id": client_info.get('id'), "type": "holdings"})

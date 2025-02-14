@@ -133,7 +133,7 @@ class AssetManagementApp:
         
         report_type = st.selectbox(
             "Select Report Type",
-            ["Comprehensive Portfolio Report", "Performance Summary", "Holdings Analysis"]
+            ["Comprehensive Portfolio Investment Report"]
         )
         
         if st.button("Generate Report"):

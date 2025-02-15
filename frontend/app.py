@@ -159,12 +159,13 @@ def apply_custom_css():
         
         /* Beautiful metrics display */
         .metric-container {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0.5rem 0 !important;
+            border: none !important;
+            border-bottom: 2px solid var(--secondary-color) !important;
+            border-radius: 0 !important;
             margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.1);
         }
         
         .metric-value {
@@ -293,6 +294,144 @@ def apply_custom_css():
         .stTitle {
             margin-top: 0 !important;
             padding-top: 0 !important;
+        }
+
+        /* Hide boxes under Asset Allocation and Top Holdings */
+        h3:has(+ .element-container .dataframe-container) + .element-container {
+            display: none !important;
+        }
+
+        /* Make Portfolio Summary box minimal */
+        .metric-container {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0.5rem 0 !important;
+            border: none !important;
+            border-bottom: 2px solid var(--secondary-color) !important;
+            border-radius: 0 !important;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Keep client info box visible */
+        .client-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* Remove ALL boxes around the main title */
+        .stTitle {
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Main title underline styling */
+        .stTitle h1 {
+            border-bottom: 3px solid #E74C3C !important;
+            padding-bottom: 0.5rem;
+            margin: 0 0 1rem 0 !important;
+            display: block;
+            width: 100%;
+        }
+
+        /* Remove Streamlit's default header container */
+        div[data-testid="stHeader"] {
+            display: none !important;
+        }
+
+        /* Remove parent container spacing */
+        div[data-testid="stVerticalBlock"] > div:has(h1) {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* Remove existing underlines from metric container */
+        .metric-container {
+            border-bottom: none !important;
+        }
+
+        /* Unified header styling */
+        h1, h2, h3 {
+            border-bottom: 2px solid #E74C3C !important;
+            padding-bottom: 0.5rem;
+            margin: 0 0 1rem 0 !important;
+            display: block;
+            width: 100%;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        /* Remove containers for all headers */
+        .element-container:has(h1),
+        .element-container:has(h2),
+        .element-container:has(h3) {
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        /* Remove dataframe containers */
+        .dataframe-container {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+        }
+
+        /* Remove metric container borders */
+        .metric-container {
+            border-bottom: none !important;
+        }
+
+        /* Restore main title styling */
+        h1 {
+            background: var(--gradient) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            font-weight: 800;
+            margin: 0 0 1rem 0 !important;
+            padding: 0 !important;
+            font-size: 2.7rem;
+            border-bottom: none !important;  /* Remove red line */
+        }
+
+        /* Remove all header underlines */
+        h2, h3 {
+            border-bottom: none !important;
+            padding-bottom: 0 !important;
+            margin: 0 0 1rem 0 !important;
+        }
+
+        /* Remove all containers and boxes */
+        .element-container:has(h1),
+        .element-container:has(h2),
+        .element-container:has(h3),
+        .metric-container,
+        .dataframe-container {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+        }
+
+        /* Keep client selector box */
+        .client-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.1);
         }
         </style>
     """, unsafe_allow_html=True)

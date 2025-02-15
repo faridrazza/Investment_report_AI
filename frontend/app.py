@@ -22,6 +22,281 @@ def check_dependencies():
         subprocess.check_call([sys.executable, "-m", "pip", "install", "langchain-community==0.0.10"])
         st.experimental_rerun()
 
+# Custom CSS for better mobile responsiveness
+def apply_custom_css():
+    st.markdown("""
+        <style>
+        /* Removed element hiding rules that were causing content disappearance */
+        
+        /* Adjust header styling */
+        h1, h2, h3 {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        h1 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            margin: 0 !important;  /* Remove all margins */
+            padding: 0 !important; /* Remove all padding */
+            font-size: 2.7rem;
+            line-height: 1 !important;  /* Prevent vertical spacing */
+        }
+        
+        h2 {
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        /* Modern color scheme and base styles */
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #3498DB;
+            --accent-color: #E74C3C;
+            --background-light: #F8F9FA;
+            --text-color: #2C3E50;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #2C3E50, #3498DB);
+        }
+        
+        /* Adjust top spacing and font sizes */
+        .main .block-container {
+            max-width: 1200px;
+            padding: 0 !important;  /* Remove all padding */
+            margin: 0 !important;   /* Remove all margins */
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+        }
+        
+        /* Adjusted header spacing */
+        h1 {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin: 0.5rem 0 1.5rem 0;  /* Reduced top margin */
+            font-size: 2.7rem;  /* Slightly larger title */
+        }
+        
+        /* Adjust subheader sizes */
+        h2, .sidebar h2 {
+            font-size: 1.8rem;  /* Slightly larger subheadings */
+            margin-bottom: 1rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;  /* Slightly larger h3 */
+        }
+        
+        /* Adjust text content size */
+        p, .stMarkdown, .stText {
+            font-size: 1.1rem;  /* Slightly larger regular text */
+        }
+        
+        /* Enhanced typography */
+        .main .block-container {
+            max-width: 1200px;
+            padding: 2rem;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Beautiful header styling */
+        h1 {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+        
+        /* Enhanced tab styling */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 30px;
+            padding: 15px 20px;
+            background: var(--background-light);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            padding: 12px 24px;
+            font-weight: 500;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .stTabs [data-baseweb="tab"]:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .stTabs [data-baseweb="tab"][aria-selected="true"] {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        /* Enhanced client selector styling */
+        .client-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        /* Beautiful metrics display */
+        .metric-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        /* Enhanced dataframe styling */
+        .dataframe-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin: 1rem 0;
+        }
+        
+        .dataframe {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* Beautiful button styling */
+        .stButton > button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .stButton > button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        /* Chat interface enhancement */
+        .stChatMessage {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Mobile-specific enhancements */
+        @media (max-width: 768px) {
+            /* Hide sidebar elements */
+            section[data-testid="stSidebar"][aria-expanded="true"],
+            section[data-testid="stSidebar"][aria-expanded="false"],
+            button[kind="header"] {
+                display: none !important;
+            }
+            
+            /* Mobile client selector */
+            .main-client-selector {
+                display: block !important;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+                background: white;
+                padding: 15px;
+                margin: -1rem -1rem 1rem -1rem;
+                border-bottom: 1px solid rgba(0,0,0,0.1);
+                box-shadow: var(--shadow);
+            }
+            
+            /* Mobile-optimized metrics */
+            .metric-container {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            /* Mobile-friendly tabs */
+            .stTabs [data-baseweb="tab"] {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            /* Improved mobile spacing */
+            .main .block-container {
+                padding: 1rem;
+            }
+        }
+        
+        /* Desktop-specific enhancements */
+        @media (min-width: 769px) {
+            .main-client-selector {
+                display: none !important;
+            }
+            
+            section[data-testid="stSidebar"] {
+                background: var(--background-light);
+                border-right: 1px solid rgba(0,0,0,0.1);
+            }
+            
+            /* Enhanced sidebar styling */
+            .sidebar .sidebar-content {
+                background: white;
+                border-radius: 12px;
+                margin: 1rem;
+                padding: 1rem;
+                box-shadow: var(--shadow);
+            }
+        }
+        
+        /* Animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .metric-container, .dataframe-container, .stChatMessage {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Remove space from Streamlit's root elements */
+        .stApp {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .stTitle {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
 class AssetManagementApp:
     def __init__(self):
         check_dependencies()
@@ -55,16 +330,24 @@ class AssetManagementApp:
             st.stop()  # Prevent further execution
 
     def run(self):
-        st.set_page_config(page_title="Asset Management AI", layout="wide")
+        st.set_page_config(
+            page_title="Asset Management AI",
+            layout="wide",
+            initial_sidebar_state="collapsed"
+        )
+        
+        apply_custom_css()
+        
         st.title("Asset Management AI Platform")
 
-        # Sidebar for client selection
-        st.sidebar.title("Client Selection")
-        selected_client = st.sidebar.selectbox(
+        # Always visible client selector
+        st.markdown('<div class="client-selector">', unsafe_allow_html=True)
+        selected_client = st.selectbox(
             "Select Client",
             options=[client['clientInfo']['name'] for client in self.client_data['clients']],
             key="client_selector"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # Get selected client data
         client_info = next(
@@ -72,8 +355,8 @@ class AssetManagementApp:
             if client['clientInfo']['name'] == selected_client
         )
 
-        # Main content area with tabs
-        tab1, tab2, tab3 = st.tabs(["Portfolio Overview", "Report Generation", "Chat Assistant"])
+        # Tabs with improved spacing
+        tab1, tab2, tab3 = st.tabs(["Portfolio", "Reports", "Chat"])
 
         with tab1:
             self.show_portfolio_overview(client_info)
@@ -87,23 +370,42 @@ class AssetManagementApp:
     def show_portfolio_overview(self, client_info):
         st.header("Portfolio Overview")
         
-        # Client Information
-        col1, col2 = st.columns(2)
-        with col1:
+        # Responsive client information
+        st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+        if st.session_state.get('mobile_view', False):
+            # Single column layout for mobile
             st.subheader("Client Information")
-            st.write(f"Name: {client_info['clientInfo']['name']}")
-            st.write(f"Account Type: {client_info['clientInfo']['accountType']}")
-            st.write(f"Risk Profile: {client_info['clientInfo']['riskProfile']}")
-            st.write(f"Investment Strategy: {client_info['clientInfo']['investmentStrategy']}")
-
-        with col2:
+            st.write(f"Name: {client_info['clientInfo'].get('name', 'N/A')}")
+            st.write(f"Account Type: {client_info['clientInfo'].get('accountType', 'N/A')}")
+            st.write(f"Risk Profile: {client_info['clientInfo'].get('riskProfile', 'N/A')}")
+            st.write(f"Investment Strategy: {client_info['clientInfo'].get('investmentStrategy', 'N/A')}")
+            
             st.subheader("Portfolio Summary")
-            st.write(f"Total Value: ${client_info['portfolioSummary']['totalValue']:,.2f}")
-            st.write(f"YTD Return: {client_info['performance']['ytd']}%")
-            st.write(f"Since Inception: {client_info['performance']['sinceInception']}%")
+            total_value = client_info['portfolioSummary'].get('totalValue', 0)
+            st.write(f"Total Value: ${total_value:,.2f}")
+            st.write(f"YTD Return: {client_info['performance'].get('ytd', 0)}%")
+            st.write(f"Since Inception: {client_info['performance'].get('sinceInception', 0)}%")
+        else:
+            # Two column layout for desktop
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Client Information")
+                st.write(f"Name: {client_info['clientInfo'].get('name', 'N/A')}")
+                st.write(f"Account Type: {client_info['clientInfo'].get('accountType', 'N/A')}")
+                st.write(f"Risk Profile: {client_info['clientInfo'].get('riskProfile', 'N/A')}")
+                st.write(f"Investment Strategy: {client_info['clientInfo'].get('investmentStrategy', 'N/A')}")
 
-        # Asset Allocation
+            with col2:
+                st.subheader("Portfolio Summary")
+                total_value = client_info['portfolioSummary'].get('totalValue', 0)
+                st.write(f"Total Value: ${total_value:,.2f}")
+                st.write(f"YTD Return: {client_info['performance'].get('ytd', 0)}%")
+                st.write(f"Since Inception: {client_info['performance'].get('sinceInception', 0)}%")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Responsive asset allocation
         st.subheader("Asset Allocation")
+        st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
         allocation_data = {
             "Asset Class": ["Equities", "Fixed Income", "Alternatives", "Cash"],
             "Current (%)": [
@@ -119,10 +421,12 @@ class AssetManagementApp:
                 client_info['assetAllocation']['cash']['target']
             ]
         }
-        st.dataframe(allocation_data)
+        st.dataframe(allocation_data, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # Top Holdings
+        # Responsive holdings table
         st.subheader("Top Holdings")
+        st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
         holdings_data = [
             {
                 "Security": holding['name'],
@@ -132,7 +436,8 @@ class AssetManagementApp:
             }
             for holding in client_info['topHoldings']
         ]
-        st.dataframe(holdings_data)
+        st.dataframe(holdings_data, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     def show_report_generation(self, client_info):
         st.header("Report Generation")

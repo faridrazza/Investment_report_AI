@@ -2,10 +2,16 @@ import streamlit as st
 import asyncio
 import json
 from datetime import datetime
+import sys
+import os
+from pathlib import Path
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root))
+
 from backend import ChatService, ReportService, MarketService, VectorStore
 from backend.models.portfolio import Portfolio
-import os
-import sys
 import subprocess
 
 def check_dependencies():

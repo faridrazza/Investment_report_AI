@@ -8,6 +8,7 @@ from backend.utils.visualization import PortfolioVisualizer
 from backend.services.chat_service import ChatService
 from backend.services.market_service import MarketService
 from backend.database.vector_store import VectorStore
+import os
 
 class ReportService:
     def __init__(self):
@@ -157,7 +158,7 @@ class ReportService:
             template = self.template_env.get_template('report_template.html')
             html_content = template.render(**template_data)
 
-            # PDF options for better rendering
+            # Configure pdfkit options based on environment
             pdf_options = {
                 'page-size': 'Letter',
                 'margin-top': '0.100in',
@@ -170,13 +171,17 @@ class ReportService:
                 'disable-smart-shrinking': None
             }
 
-            # Convert HTML to PDF with explicit configuration
-            config = pdfkit.configuration(wkhtmltopdf=self.wkhtmltopdf_path)
+            # Configure wkhtmltopdf path based on environment
+            if os.environ.get('RENDER'):
+                config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+            else:
+                config = pdfkit.configuration()
 
+            # Generate PDF
             pdf_content = pdfkit.from_string(
-                html_content, 
-                False, 
-                options=pdf_options, 
+                html_content,
+                False,
+                options=pdf_options,
                 configuration=config
             )
 

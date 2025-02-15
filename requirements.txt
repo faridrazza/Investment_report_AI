@@ -15,3 +15,4 @@ aiohttp==3.11.12
 pandas==2.2.3
 numpy==1.26.4
 plotly==5.18.0 
+wkhtmltopdf 

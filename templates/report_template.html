@@ -265,9 +265,9 @@
         </div>
     </div>
 
-    <!-- Performance History Pages -->
+    <!-- Performance History & Analysis Page -->
     <div class="section performance-history">
-        <h2>Performance History</h2>
+        <h2>Performance History & Analysis</h2>
         <div class="chart-container">
             <div class="chart">
                 <img src="data:image/png;base64,{{ charts.performance }}" alt="Performance History">
@@ -301,9 +301,7 @@
                 </table>
             </div>
         </div>
-    </div>
-
-    <div class="section performance-analysis">
+        
         <div class="analysis-content">
             {{ ai_analysis.get('performance_analysis', 'Analysis not available')|safe }}
         </div>

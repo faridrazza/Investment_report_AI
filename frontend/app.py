@@ -477,7 +477,7 @@ class AssetManagementApp:
         
         apply_custom_css()
         
-        st.title("Asset Management AI Platform")
+        st.title("Asset Management With AI")
 
         # Always visible client selector
         st.markdown('<div class="client-selector">', unsafe_allow_html=True)
@@ -580,11 +580,6 @@ class AssetManagementApp:
 
     def show_report_generation(self, client_info):
         st.header("Report Generation")
-        
-        report_type = st.selectbox(
-            "Select Report Type",
-            ["Comprehensive Portfolio Investment Report"]
-        )
         
         if st.button("Generate Report"):
             with st.spinner("Generating report..."):

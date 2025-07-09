@@ -1,7 +1,7 @@
 **Project: AI-Powered Investment Report Generator for Asset Management Firms**
 
 **Overview:**
-We built an application designed specifically for asset management firms to automate the process of generating detailed investment reports. Traditionally, creating these reports involved manual data collection, formatting, and analysis — a time-consuming and error-prone process. Our solution streamlines this workflow using AI and cloud-based infrastructure.
+I built an application designed specifically for asset management firms to automate the process of generating detailed investment reports. Traditionally, creating these reports involved manual data collection, formatting, and analysis — a time-consuming and error-prone process. Our solution streamlines this workflow using AI and cloud-based infrastructure.
 
 **Key Features:**
 

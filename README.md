@@ -1,9 +1,9 @@
-Project: AI-Powered Investment Report Generator for Asset Management Firms
+**Project: AI-Powered Investment Report Generator for Asset Management Firms**
 
-Overview:
+**Overview:**
 We built an application designed specifically for asset management firms to automate the process of generating detailed investment reports. Traditionally, creating these reports involved manual data collection, formatting, and analysis — a time-consuming and error-prone process. Our solution streamlines this workflow using AI and cloud-based infrastructure.
 
-Key Features:
+**Key Features:**
 
 Automated Data Ingestion:
 The system pulls data from multiple financial sources (APIs, internal databases, Excel/CSV files).
@@ -20,7 +20,7 @@ Users can ask questions about the data (e.g., “What was the ROI on tech sector
 Compliance-Ready Output:
 Reports are generated with version history and audit trails to meet regulatory standards.
 
-Tech Stack:
+**Tech Stack:**
 
 Frontend: React + Tailwind
 

@@ -10,17 +10,36 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
-from backend import ChatService, ReportService, MarketService, VectorStore
-from backend.models.portfolio import Portfolio
+# Import with better error handling
+try:
+    from backend import ChatService, ReportService, MarketService, VectorStore
+    from backend.models.portfolio import Portfolio
+except ImportError as e:
+    st.error(f"Import Error: {e}")
+    st.error("Please ensure all dependencies are installed correctly.")
+    st.stop()
+
 import subprocess
 
 def check_dependencies():
     try:
         import langchain_community
+        import langchain_openai
+        from langchain_core.caches import BaseCache
+        # Force model rebuilding to fix Pydantic issues
+        try:
+            from langchain_openai import ChatOpenAI
+            ChatOpenAI.model_rebuild()
+        except Exception as e:
+            print(f"Model rebuild warning: {e}")
     except ImportError:
         st.error("Missing required dependencies. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "langchain-community==0.0.10"])
-        st.experimental_rerun()
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "langchain-community==0.3.17"])
+            st.experimental_rerun()
+        except Exception as e:
+            st.error(f"Failed to install dependencies: {e}")
+            st.stop()
 
 # Custom CSS for better mobile responsiveness
 def apply_custom_css():
@@ -205,233 +224,29 @@ def apply_custom_css():
             box-shadow: var(--shadow);
         }
         
-        /* Chat interface enhancement */
-        .stChatMessage {
-            background: white;
+        /* Alert styling */
+        .alert {
             padding: 1rem;
-            border-radius: 12px;
+            border-radius: 8px;
             margin: 1rem 0;
-            box-shadow: var(--shadow);
         }
         
-        /* Mobile-specific enhancements */
-        @media (max-width: 768px) {
-            /* Hide sidebar elements */
-            section[data-testid="stSidebar"][aria-expanded="true"],
-            section[data-testid="stSidebar"][aria-expanded="false"],
-            button[kind="header"] {
-                display: none !important;
-            }
-            
-            /* Mobile client selector */
-            .main-client-selector {
-                display: block !important;
-                position: sticky;
-                top: 0;
-                z-index: 999;
-                background: white;
-                padding: 15px;
-                margin: -1rem -1rem 1rem -1rem;
-                border-bottom: 1px solid rgba(0,0,0,0.1);
-                box-shadow: var(--shadow);
-            }
-            
-            /* Mobile-optimized metrics */
-            .metric-container {
-                padding: 1rem;
-                margin-bottom: 1rem;
-            }
-            
-            /* Mobile-friendly tabs */
-            .stTabs [data-baseweb="tab"] {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-            
-            /* Improved mobile spacing */
-            .main .block-container {
-                padding: 1rem;
-            }
+        .alert-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
         }
         
-        /* Desktop-specific enhancements */
-        @media (min-width: 769px) {
-            .main-client-selector {
-                display: none !important;
-            }
-            
-            section[data-testid="stSidebar"] {
-                background: var(--background-light);
-                border-right: 1px solid rgba(0,0,0,0.1);
-            }
-            
-            /* Enhanced sidebar styling */
-            .sidebar .sidebar-content {
-                background: white;
-                border-radius: 12px;
-                margin: 1rem;
-                padding: 1rem;
-                box-shadow: var(--shadow);
-            }
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
         }
         
-        /* Animation effects */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .metric-container, .dataframe-container, .stChatMessage {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        /* Remove space from Streamlit's root elements */
-        .stApp {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        .stTitle {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        /* Hide boxes under Asset Allocation and Top Holdings */
-        h3:has(+ .element-container .dataframe-container) + .element-container {
-            display: none !important;
-        }
-
-        /* Make Portfolio Summary box minimal */
-        .metric-container {
-            background: transparent !important;
-            box-shadow: none !important;
-            padding: 0.5rem 0 !important;
-            border: none !important;
-            border-bottom: 2px solid var(--secondary-color) !important;
-            border-radius: 0 !important;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Keep client info box visible */
-        .client-selector {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 25px;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        /* Remove ALL boxes around the main title */
-        .stTitle {
-            background: transparent !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-
-        /* Main title underline styling */
-        .stTitle h1 {
-            border-bottom: 3px solid #E74C3C !important;
-            padding-bottom: 0.5rem;
-            margin: 0 0 1rem 0 !important;
-            display: block;
-            width: 100%;
-        }
-
-        /* Remove Streamlit's default header container */
-        div[data-testid="stHeader"] {
-            display: none !important;
-        }
-
-        /* Remove parent container spacing */
-        div[data-testid="stVerticalBlock"] > div:has(h1) {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        /* Remove existing underlines from metric container */
-        .metric-container {
-            border-bottom: none !important;
-        }
-
-        /* Unified header styling */
-        h1, h2, h3 {
-            border-bottom: 2px solid #E74C3C !important;
-            padding-bottom: 0.5rem;
-            margin: 0 0 1rem 0 !important;
-            display: block;
-            width: 100%;
-            background: transparent !important;
-            box-shadow: none !important;
-        }
-
-        /* Remove containers for all headers */
-        .element-container:has(h1),
-        .element-container:has(h2),
-        .element-container:has(h3) {
-            background: transparent !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            box-shadow: none !important;
-            border: none !important;
-        }
-
-        /* Remove dataframe containers */
-        .dataframe-container {
-            background: transparent !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: none !important;
-        }
-
-        /* Remove metric container borders */
-        .metric-container {
-            border-bottom: none !important;
-        }
-
-        /* Restore main title styling */
-        h1 {
-            background: var(--gradient) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            font-weight: 800;
-            margin: 0 0 1rem 0 !important;
-            padding: 0 !important;
-            font-size: 2.7rem;
-            border-bottom: none !important;  /* Remove red line */
-        }
-
-        /* Remove all header underlines */
-        h2, h3 {
-            border-bottom: none !important;
-            padding-bottom: 0 !important;
-            margin: 0 0 1rem 0 !important;
-        }
-
-        /* Remove all containers and boxes */
-        .element-container:has(h1),
-        .element-container:has(h2),
-        .element-container:has(h3),
-        .metric-container,
-        .dataframe-container {
-            background: transparent !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: none !important;
-        }
-
-        /* Keep client selector box */
-        .client-selector {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 25px;
-            border: 1px solid rgba(0,0,0,0.1);
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -458,14 +273,40 @@ class AssetManagementApp:
             # Initialize vector store with data
             self.vector_store.initialize_from_json(self.client_data)
             
-            # Initialize other services
-            self.chat_service = ChatService(self.vector_store)
-            self.report_service = ReportService()
-            self.market_service = MarketService()
+            # Initialize other services with proper error handling
+            try:
+                self.chat_service = ChatService(self.vector_store)
+                self.report_service = ReportService()
+                self.market_service = MarketService()
+            except Exception as service_error:
+                st.error(f"Service initialization error: {service_error}")
+                st.error("This is likely due to missing or incorrect API keys.")
+                st.error("Please check your .env file and ensure OPENAI_API_KEY and ALPHA_VANTAGE_API_KEY are set correctly.")
+                st.stop()
                 
+        except FileNotFoundError as fe:
+            st.error(f"File Error: {str(fe)}")
+            st.error("Please ensure the client data file exists in the data/ directory.")
+            st.stop()
         except Exception as e:
             st.error(f"Initialization Error: {str(e)}")
-            st.error("Please check your OpenAI API key and data files")
+            st.error("This error is typically caused by:")
+            st.error("1. Missing or incorrect OpenAI API key")
+            st.error("2. Missing or incorrect Alpha Vantage API key") 
+            st.error("3. Pydantic version compatibility issues")
+            st.error("4. Missing data files")
+            
+            # Show detailed error information
+            with st.expander("Show detailed error information"):
+                st.code(str(e))
+                
+            # Provide helpful suggestions
+            st.info("To fix this issue:")
+            st.info("1. Create a .env file in the project root")
+            st.info("2. Add your API keys: OPENAI_API_KEY=your_key_here")
+            st.info("3. Add: ALPHA_VANTAGE_API_KEY=your_key_here")
+            st.info("4. Ensure all dependencies are installed with: pip install -r requirements.txt")
+            
             st.stop()  # Prevent further execution
 
     def run(self):

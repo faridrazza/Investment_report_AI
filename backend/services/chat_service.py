@@ -1,4 +1,15 @@
 from typing import Dict, List
+from dotenv import load_dotenv
+
+# Load environment variables first
+load_dotenv()
+
+# Import Pydantic and ensure proper initialization
+import pydantic
+from pydantic import BaseModel
+
+# Import LangChain components with proper order
+from langchain_core.caches import BaseCache
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -6,19 +17,31 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from backend.config import Config
 from backend.database.vector_store import VectorStore
 from datetime import datetime
-from dotenv import load_dotenv
 from backend.services.market_service import MarketService
 
-load_dotenv()
+# Ensure ChatOpenAI is properly initialized with BaseCache
+try:
+    # Force Pydantic model rebuilding for compatibility
+    ChatOpenAI.model_rebuild()
+except Exception as e:
+    print(f"Model rebuild warning: {e}")
 
 class ChatService:
     def __init__(self, vector_store: VectorStore):
         self.vector_store = vector_store
-        self.model = ChatOpenAI(
-            model_name=Config.MODEL_NAME,
-            openai_api_key=Config.OPENAI_API_KEY,
-            temperature=0.7
-        )
+        
+        # Initialize ChatOpenAI with proper error handling
+        try:
+            self.model = ChatOpenAI(
+                model=Config.MODEL_NAME,
+                openai_api_key=Config.OPENAI_API_KEY,
+                temperature=0.7
+            )
+        except Exception as e:
+            print(f"Error initializing ChatOpenAI: {e}")
+            print("Please ensure your OpenAI API key is correctly set.")
+            raise ValueError(f"Failed to initialize ChatOpenAI: {str(e)}")
+            
         self.current_client = None
         self.message_history = []
         
@@ -198,5 +221,12 @@ class ChatService:
             
         except Exception as e:
             print(f"Analysis generation error: {str(e)}")
-            print(f"Full error details: {e.__class__.__name__}")
-            raise 
+            return {
+                'executive_summary': f"Error generating analysis: {str(e)}",
+                'performance_analysis': "Unable to generate performance analysis",
+                'allocation_analysis': "Unable to generate allocation analysis", 
+                'key_observations': "Unable to generate key observations",
+                'recommendations': "Unable to generate recommendations",
+                'holdings_analysis': "Unable to generate holdings analysis",
+                'historical_analysis': "Unable to generate historical analysis"
+            } 
